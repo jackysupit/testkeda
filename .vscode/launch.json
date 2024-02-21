@@ -1,0 +1,24 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": "Run oKeda",
+			"type": "debugpy",
+			"request": "launch",
+			"stopOnEntry": false,
+			"console": "integratedTerminal",
+			// "python": "/Users/jeki/opt/anaconda3/bin/python3", // cari dengan which python3
+			"python": "/Users/jeki/opt/anaconda3/envs/sekai_env/bin/python3", // jalanin ini dulu: conda activate sekai_env
+			"program": "/opt/odoo/core/odoo14/odoo-bin",
+			"args": [
+				"--config=/Users/jeki/work/oMisc/oKeda/oKedaJeki.conf",
+				"--update=okeda",
+				// "--test-enable"
+			],
+			"env": {
+				// "GEVENT_SUPPORT": "true",
+				"PATH": "/usr/local/opt/postgresql@12/bin:$PATH"
+			}
+		}
+	]
+}

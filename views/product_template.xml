@@ -1,0 +1,20 @@
+<odoo>
+    <data>
+        <record id="form_material" model="ir.ui.view">
+            <field name="name">Master Material</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_only_form_view"/>
+            <field name="arch" type="xml">
+                <field name="default_code" position="after">
+                    <field name="is_material"/>
+                    <field name="material_code" attrs="{'invisible':[('is_material','=',False)]}"/>
+                    <field name="material_type" attrs="{'invisible':[('is_material','=',False)]}"/>
+                    <separator />
+                    <field name="buy_vendor_id" />
+                    <field name="buy_price" />
+                    <field name="buy_currency_id" />
+                </field>
+            </field>
+        </record>
+    </data>
+</odoo>
