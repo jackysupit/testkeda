@@ -13,7 +13,7 @@
 			"args": [
 				"--config=/Users/jeki/work/oMisc/oKeda/oKedaJeki.conf",
 				"--update=okeda",
-				// "--test-enable"
+				"--test-enable"
 			],
 			"env": {
 				// "GEVENT_SUPPORT": "true",

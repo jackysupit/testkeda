@@ -61,9 +61,48 @@ class MaterialController(http.Controller):
            csrf=False)    
     def do_material_update(self, material_id, **kw):
         data = json.loads(request.httprequest.data)
-        partner = request.env['product.template'].sudo().browse(material_id)
-        if partner:
-            partner.write(data)
+        material = request.env['product.template'].sudo().browse(material_id)
+        if not material:
+            return {'error': _('Material is not found')}
+
+        #ini khusus jika ada edit vendor, maka akan diupdate seller_ids
+        if 'buy_vendor_id' in data:
+            if 'buy_price' not in data:
+                return {'error': _('edit buy_vendor_id must with buy_price too')}
+            
+        if 'buy_price' in data:
+            if 'buy_vendor_id' not in data:
+                return {'error': _('edit buy_price must with buy_vendor_id too')}
+
+        if 'buy_vendor_id' in data:
+            buy_vendor_id = data.get('buy_vendor_id')
+            buy_price = data.get('buy_price')
+
+            data.pop('buy_vendor_id', None)
+            data.pop('buy_price', None)
+
+            vendor = request.env['res.partner'].sudo().browse(buy_vendor_id)
+            if not vendor:
+                return {'error': _('buy_vendor_id is not found')}
+            
+            if not material.seller_ids:
+                data['seller_ids'] = [(0, 0, {'name': buy_vendor_id, 'price': buy_price})]
+
+            else:
+                material.seller_ids[0].sequence = 10 #gapapa hardcoded, yang penting bukan sequence = 0
+
+                need_to_create = True
+                for seller in material.seller_ids:
+                    if seller.name.id == buy_vendor_id:
+                        seller.sequence == 0
+                        need_to_create = False
+
+                if need_to_create:
+                    data['seller_ids'] = [(0, 0, {'name': buy_vendor_id, 'price': buy_price, 'sequence': 0})]
+
+        if material:
+            material.sudo().write(data)
+            # material.env.cr.commit()
             return {'success': True}
         else:
             return {'error': 'Material is not found'}
@@ -76,9 +115,9 @@ class MaterialController(http.Controller):
            methods=['DELETE'],
            csrf=False)    
     def do_material_delete(self, material_id, **kw):
-        partner = request.env['product.template'].sudo().browse(material_id)
-        if partner:
-            partner.update({
+        material = request.env['product.template'].sudo().browse(material_id)
+        if material:
+            material.update({
                 'active': False,
             })
             return {'success': True}
